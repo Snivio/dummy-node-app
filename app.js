@@ -2,6 +2,7 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+const fetch = require("node-fetch");
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
@@ -22,13 +23,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+//todos
+app.get('/todos', (req, res) => fetch('https://jsonplaceholder.typicode.com/todos').then(data => data.json().then(responce => res.send(responce))))
+
+//todos/id
+app.get('/todos/:id', (req, res) => fetch(`https://jsonplaceholder.typicode.com/todos/${req.params.id}`).then(data => data.json().then(responce => res.send(responce))))
+
+
+
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
